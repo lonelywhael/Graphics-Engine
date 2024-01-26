@@ -1,0 +1,35 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe build active file",
+			"command": "C:\\mingw64\\bin\\g++.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-std=c++20",
+				"-I${workspaceFolder}\\include",
+				"-I${workspaceFolder}\\lib\\include",
+				"-g",
+				"${workspaceFolder}\\src\\*.cpp",
+				"${workspaceFolder}\\src\\gui\\*.cpp",
+				"${workspaceFolder}\\src\\io\\*.cpp",
+				"${workspaceFolder}\\lib\\src\\glad\\*.cpp",
+				"${workspaceFolder}\\lib\\src\\stb_image\\*.cpp",
+				"${workspaceFolder}\\build\\*.dll",
+				"-o",
+				"${workspaceFolder}\\build\\shader_test.exe",
+            	//"-Wall",
+            	//"-Wextra"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: \"C:\\mingw64\\bin\\g++.exe\""
+		}
+	]
+}

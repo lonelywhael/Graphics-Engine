@@ -1,0 +1,35 @@
+1. XX learn framebuffers 
+1.5. XX learn anti-aliasing
+2. learn some optimizations (XX face culling, instancing, fustrum culling, deferred shading)
+2.5 XX learn cube maps
+3. XX learn shadows
+3.5 XX fix material over-specification
+3.6 XX learn post processing and fix pcf issues
+3.7 XX fix the chaotic mess of how textures are handled and allow multiple shadows
+3.75 attach fustrum values to light objects XX, and maybe figure out how to pass norm data to the shadow map shader?
+3.76 XX implement for texture maps
+3.8 cascade mapping
+4. height maps and tesselation
+5. clouds? (blending?)
+6. text
+7. menues
+8. XX shader builder
+    * XX streamline render functions
+    * load and save
+    * allow global variables (like n_lights) to be set by the CPU
+9. model hierarchy
+10. add some features to the scene class that manage the creation of render groups
+    - adding automatic creation of render groups based on the models, lights, etc that have been added to the scene
+11. memory stuff
+    * smart pointers/reference counters
+    * shallow/deep copying, copy on write
+    * rule of 3/5
+    
+7. make a model builder
+8. make a texture builder
+
+6. solar system lighting simulation
+
+7. neural nets
+8. n body/gas collapse simulation
+9. earth simulations

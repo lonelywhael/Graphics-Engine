@@ -1,0 +1,493 @@
+{
+	"frame" : {
+		"frame_buffer" : null,
+		"render_groups" : [
+			{
+				"shader" : {
+					"rendering_style" : 0.000000,
+					"output_buffer" : 0.000000,
+					"material_style" : 0.000000,
+					"lighting_style" : 0.000000,
+					"shadow_style" : 0.000000,
+					"texture_style" : 1.000000,
+					"postprocessing" : 0.000000
+				},
+				"models" : [
+					{
+						"vertex_array" : {
+							"draw_type" : 35044.000000,
+							"geometry_type" : 1.000000,
+							"pane_dims" : [ -1.000000, -1.000000, 2.000000, 2.000000 ]
+						},
+						"texture_group" : {
+							"first_slot" : 3.000000,
+							"textures" : [
+								{
+									"texture_format" : 3553.000000,
+									"file_name" : "",
+									"extension" : "",
+									"filter" : 9728.000000,
+									"wrapper" : 33071.000000,
+									"mipmap" : 0.000000
+								}
+							]
+						},
+						"material" : null,
+						"pos" : [ 0.000000, 0.000000, 0.000000 ],
+						"scale" : [ 0.000000, 0.000000, 0.000000 ],
+						"aos" : [ 0.000000, 0.000000, 0.000000 ],
+						"angle" : 0.000000,
+						"color" : [ 0.000000, 0.000000, 0.000000 ]
+					}
+				]
+			}
+		],
+		"subframes" : [
+			{
+				"frame_buffer" : {
+					"type" : 1.000000,
+					"call_format" : 36160.000000,
+					"width" : 320.000000,
+					"height" : 240.000000,
+					"n_channels" : 3.000000,
+					"depth_enabled" : true
+				},
+				"render_groups" : [
+					{
+						"shader" : {
+							"rendering_style" : 3.000000,
+							"output_buffer" : 0.000000,
+							"material_style" : 0.000000,
+							"lighting_style" : 0.000000,
+							"shadow_style" : 0.000000,
+							"texture_style" : 2.000000,
+							"postprocessing" : 0.000000
+						},
+						"models" : [
+							{
+								"vertex_array" : {
+									"draw_type" : 35044.000000,
+									"geometry_type" : 0.000000,
+									"file_name" : "cube_map.bin"
+								},
+								"texture_group" : {
+									"first_slot" : 0.000000,
+									"textures" : [
+										{
+											"texture_format" : 34067.000000,
+											"file_name" : "skybox",
+											"extension" : ".jpg",
+											"filter" : 9729.000000,
+											"wrapper" : 33071.000000,
+											"mipmap" : 0.000000
+										}
+									]
+								},
+								"material" : null,
+								"pos" : [ 0.000000, 0.000000, 0.000000 ],
+								"scale" : [ 0.000000, 0.000000, 0.000000 ],
+								"aos" : [ 0.000000, 0.000000, 0.000000 ],
+								"angle" : 0.000000,
+								"color" : [ 0.000000, 0.000000, 0.000000 ]
+							}
+						]
+					},
+					{
+						"shader" : {
+							"rendering_style" : 2.000000,
+							"output_buffer" : 0.000000,
+							"material_style" : 1.000000,
+							"lighting_style" : 1.000000,
+							"shadow_style" : 1.000000,
+							"texture_style" : 0.000000,
+							"postprocessing" : 0.000000
+						},
+						"models" : [
+							{
+								"vertex_array" : {
+									"draw_type" : 35044.000000,
+									"geometry_type" : 2.000000,
+									"resolution" : 500.000000,
+									"function_id" : 1.000000
+								},
+								"textureGroup" : null,
+								"material" : {
+									"type" : 1.000000,
+									"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+									"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+									"specular" : [ 0.000000, 0.000000, 0.000000 ],
+									"shininess" : 76.800003
+								},
+								"pos" : [ 0.000000, 0.000000, 0.000000 ],
+								"scale" : [ 0.000000, 0.000000, 0.000000 ],
+								"aos" : [ 0.000000, 0.000000, 0.000000 ],
+								"angle" : 0.000000,
+								"color" : [ 0.000000, 0.000000, 0.000000 ]
+							},
+							{
+								"vertex_array" : {
+									"draw_type" : 35044.000000,
+									"geometry_type" : 3.000000,
+									"resolution" : 250.000000,
+									"function_id" : 0.000000
+								},
+								"textureGroup" : null,
+								"material" : {
+									"type" : 1.000000,
+									"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+									"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+									"specular" : [ 0.000000, 0.000000, 0.000000 ],
+									"shininess" : 76.800003
+								},
+								"pos" : [ 0.000000, 0.000000, 0.000000 ],
+								"scale" : [ 0.000000, 0.000000, 0.000000 ],
+								"aos" : [ 0.000000, 0.000000, 0.000000 ],
+								"angle" : 0.000000,
+								"color" : [ 0.000000, 0.000000, 0.000000 ]
+							}
+						],
+						"lights" : [
+							{
+								"type" : 3.000000,
+								"pos" : [ 0.000000, 0.000000, 0.000000 ],
+								"dir" : [ 0.000000, 0.000000, 0.000000 ],
+								"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+								"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+								"specular" : [ 0.000000, 0.000000, 0.000000 ],
+								"constant" : 1.000000,
+								"linear" : 0.000000,
+								"quadratic" : 0.000000,
+								"inner" : 0.000000,
+								"outer" : 0.000000,
+								"shadow_map" : 3.000000
+							},
+							{
+								"type" : 3.000000,
+								"pos" : [ 0.000000, 0.000000, 0.000000 ],
+								"dir" : [ 0.000000, 0.000000, 0.000000 ],
+								"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+								"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+								"specular" : [ 0.000000, 0.000000, 0.000000 ],
+								"constant" : 1.000000,
+								"linear" : 0.000000,
+								"quadratic" : 0.000000,
+								"inner" : 0.000000,
+								"outer" : 0.000000,
+								"shadow_map" : 4.000000
+							}
+						]
+					},
+					{
+						"shader" : {
+							"rendering_style" : 2.000000,
+							"output_buffer" : 0.000000,
+							"material_style" : 2.000000,
+							"lighting_style" : 1.000000,
+							"shadow_style" : 1.000000,
+							"texture_style" : 1.000000,
+							"postprocessing" : 0.000000
+						},
+						"models" : [
+							{
+								"vertex_array" : {
+									"draw_type" : 35044.000000,
+									"geometry_type" : 0.000000,
+									"file_name" : "cube_textured.bin"
+								},
+								"texture_group" : {
+									"first_slot" : 0.000000,
+									"textures" : [
+										{
+											"texture_format" : 3553.000000,
+											"file_name" : "moomin",
+											"extension" : ".jpg",
+											"filter" : 9728.000000,
+											"wrapper" : 33071.000000,
+											"mipmap" : 0.000000
+										}
+									]
+								},
+								"material" : {
+									"type" : 2.000000,
+									"diffuse" : 0.000000,
+									"specular" : [ 0.000000, 0.000000, 0.000000 ],
+									"shininess" : 16.000000
+								},
+								"pos" : [ 0.000000, 0.000000, 0.000000 ],
+								"scale" : [ 0.000000, 0.000000, 0.000000 ],
+								"aos" : [ 0.000000, 0.000000, 0.000000 ],
+								"angle" : 0.000000,
+								"color" : [ 0.000000, 0.000000, 0.000000 ]
+							}
+						],
+						"lights" : [
+							{
+								"type" : 3.000000,
+								"pos" : [ 0.000000, 0.000000, 0.000000 ],
+								"dir" : [ 0.000000, 0.000000, 0.000000 ],
+								"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+								"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+								"specular" : [ 0.000000, 0.000000, 0.000000 ],
+								"constant" : 1.000000,
+								"linear" : 0.000000,
+								"quadratic" : 0.000000,
+								"inner" : 0.000000,
+								"outer" : 0.000000,
+								"shadow_map" : 3.000000
+							},
+							{
+								"type" : 3.000000,
+								"pos" : [ 0.000000, 0.000000, 0.000000 ],
+								"dir" : [ 0.000000, 0.000000, 0.000000 ],
+								"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+								"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+								"specular" : [ 0.000000, 0.000000, 0.000000 ],
+								"constant" : 1.000000,
+								"linear" : 0.000000,
+								"quadratic" : 0.000000,
+								"inner" : 0.000000,
+								"outer" : 0.000000,
+								"shadow_map" : 4.000000
+							}
+						]
+					}
+				],
+				"subframes" : [
+					{
+						"frame_buffer" : {
+							"type" : 2.000000,
+							"call_format" : 36160.000000,
+							"width" : 560.000000,
+							"height" : 560.000000,
+							"n_channels" : 1.000000,
+							"depth_enabled" : true
+						},
+						"render_groups" : [
+							{
+								"shader" : {
+									"rendering_style" : 1.000000,
+									"output_buffer" : 1.000000,
+									"material_style" : 0.000000,
+									"lighting_style" : 0.000000,
+									"shadow_style" : 0.000000,
+									"texture_style" : 0.000000,
+									"postprocessing" : 4.000000
+								},
+								"models" : [
+									{
+										"vertex_array" : {
+											"draw_type" : 35044.000000,
+											"geometry_type" : 2.000000,
+											"resolution" : 500.000000,
+											"function_id" : 1.000000
+										},
+										"textureGroup" : null,
+										"material" : {
+											"type" : 1.000000,
+											"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+											"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+											"specular" : [ 0.000000, 0.000000, 0.000000 ],
+											"shininess" : 76.800003
+										},
+										"pos" : [ 0.000000, 0.000000, 0.000000 ],
+										"scale" : [ 0.000000, 0.000000, 0.000000 ],
+										"aos" : [ 0.000000, 0.000000, 0.000000 ],
+										"angle" : 0.000000,
+										"color" : [ 0.000000, 0.000000, 0.000000 ]
+									},
+									{
+										"vertex_array" : {
+											"draw_type" : 35044.000000,
+											"geometry_type" : 3.000000,
+											"resolution" : 250.000000,
+											"function_id" : 0.000000
+										},
+										"textureGroup" : null,
+										"material" : {
+											"type" : 1.000000,
+											"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+											"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+											"specular" : [ 0.000000, 0.000000, 0.000000 ],
+											"shininess" : 76.800003
+										},
+										"pos" : [ 0.000000, 0.000000, 0.000000 ],
+										"scale" : [ 0.000000, 0.000000, 0.000000 ],
+										"aos" : [ 0.000000, 0.000000, 0.000000 ],
+										"angle" : 0.000000,
+										"color" : [ 0.000000, 0.000000, 0.000000 ]
+									},
+									{
+										"vertex_array" : {
+											"draw_type" : 35044.000000,
+											"geometry_type" : 0.000000,
+											"file_name" : "cube_textured.bin"
+										},
+										"texture_group" : {
+											"first_slot" : 0.000000,
+											"textures" : [
+												{
+													"texture_format" : 3553.000000,
+													"file_name" : "moomin",
+													"extension" : ".jpg",
+													"filter" : 9728.000000,
+													"wrapper" : 33071.000000,
+													"mipmap" : 0.000000
+												}
+											]
+										},
+										"material" : {
+											"type" : 2.000000,
+											"diffuse" : 0.000000,
+											"specular" : [ 0.000000, 0.000000, 0.000000 ],
+											"shininess" : 16.000000
+										},
+										"pos" : [ 0.000000, 0.000000, 0.000000 ],
+										"scale" : [ 0.000000, 0.000000, 0.000000 ],
+										"aos" : [ 0.000000, 0.000000, 0.000000 ],
+										"angle" : 0.000000,
+										"color" : [ 0.000000, 0.000000, 0.000000 ]
+									}
+								],
+								"lights" : [
+									{
+										"type" : 3.000000,
+										"pos" : [ 0.000000, 0.000000, 0.000000 ],
+										"dir" : [ 0.000000, 0.000000, 0.000000 ],
+										"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+										"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+										"specular" : [ 0.000000, 0.000000, 0.000000 ],
+										"constant" : 1.000000,
+										"linear" : 0.000000,
+										"quadratic" : 0.000000,
+										"inner" : 0.000000,
+										"outer" : 0.000000,
+										"shadow_map" : 3.000000
+									}
+								]
+							}
+						]
+					},
+					{
+						"frame_buffer" : {
+							"type" : 2.000000,
+							"call_format" : 36160.000000,
+							"width" : 560.000000,
+							"height" : 560.000000,
+							"n_channels" : 1.000000,
+							"depth_enabled" : true
+						},
+						"render_groups" : [
+							{
+								"shader" : {
+									"rendering_style" : 1.000000,
+									"output_buffer" : 1.000000,
+									"material_style" : 0.000000,
+									"lighting_style" : 0.000000,
+									"shadow_style" : 0.000000,
+									"texture_style" : 0.000000,
+									"postprocessing" : 4.000000
+								},
+								"models" : [
+									{
+										"vertex_array" : {
+											"draw_type" : 35044.000000,
+											"geometry_type" : 2.000000,
+											"resolution" : 500.000000,
+											"function_id" : 1.000000
+										},
+										"textureGroup" : null,
+										"material" : {
+											"type" : 1.000000,
+											"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+											"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+											"specular" : [ 0.000000, 0.000000, 0.000000 ],
+											"shininess" : 76.800003
+										},
+										"pos" : [ 0.000000, 0.000000, 0.000000 ],
+										"scale" : [ 0.000000, 0.000000, 0.000000 ],
+										"aos" : [ 0.000000, 0.000000, 0.000000 ],
+										"angle" : 0.000000,
+										"color" : [ 0.000000, 0.000000, 0.000000 ]
+									},
+									{
+										"vertex_array" : {
+											"draw_type" : 35044.000000,
+											"geometry_type" : 3.000000,
+											"resolution" : 250.000000,
+											"function_id" : 0.000000
+										},
+										"textureGroup" : null,
+										"material" : {
+											"type" : 1.000000,
+											"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+											"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+											"specular" : [ 0.000000, 0.000000, 0.000000 ],
+											"shininess" : 76.800003
+										},
+										"pos" : [ 0.000000, 0.000000, 0.000000 ],
+										"scale" : [ 0.000000, 0.000000, 0.000000 ],
+										"aos" : [ 0.000000, 0.000000, 0.000000 ],
+										"angle" : 0.000000,
+										"color" : [ 0.000000, 0.000000, 0.000000 ]
+									},
+									{
+										"vertex_array" : {
+											"draw_type" : 35044.000000,
+											"geometry_type" : 0.000000,
+											"file_name" : "cube_textured.bin"
+										},
+										"texture_group" : {
+											"first_slot" : 0.000000,
+											"textures" : [
+												{
+													"texture_format" : 3553.000000,
+													"file_name" : "moomin",
+													"extension" : ".jpg",
+													"filter" : 9728.000000,
+													"wrapper" : 33071.000000,
+													"mipmap" : 0.000000
+												}
+											]
+										},
+										"material" : {
+											"type" : 2.000000,
+											"diffuse" : 0.000000,
+											"specular" : [ 0.000000, 0.000000, 0.000000 ],
+											"shininess" : 16.000000
+										},
+										"pos" : [ 0.000000, 0.000000, 0.000000 ],
+										"scale" : [ 0.000000, 0.000000, 0.000000 ],
+										"aos" : [ 0.000000, 0.000000, 0.000000 ],
+										"angle" : 0.000000,
+										"color" : [ 0.000000, 0.000000, 0.000000 ]
+									}
+								],
+								"lights" : [
+									{
+										"type" : 3.000000,
+										"pos" : [ 0.000000, 0.000000, 0.000000 ],
+										"dir" : [ 0.000000, 0.000000, 0.000000 ],
+										"ambient" : [ 0.000000, 0.000000, 0.000000 ],
+										"diffuse" : [ 0.000000, 0.000000, 0.000000 ],
+										"specular" : [ 0.000000, 0.000000, 0.000000 ],
+										"constant" : 1.000000,
+										"linear" : 0.000000,
+										"quadratic" : 0.000000,
+										"inner" : 0.000000,
+										"outer" : 0.000000,
+										"shadow_map" : 4.000000
+									}
+								]
+							}
+						]
+					}
+				],
+				"pane_geometry" : {
+					"draw_type" : 35044.000000,
+					"geometry_type" : 1.000000,
+					"pane_dims" : [ -1.000000, -1.000000, 2.000000, 2.000000 ]
+				}
+			}
+		]
+	}
+}
