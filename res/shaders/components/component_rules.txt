@@ -1,0 +1,86 @@
+RULES FOR WRITING COMPONENTS
+
+Components are snippets of GLSL shader code that are parsed together in the generateVertex() and generateFragment() methods of
+gui/shader.cpp. Components files correspond to each shader parameter. Vertex shaders are not as complex and therefore do not need as
+many parameters to fully specify all different kinds of possible vertex shaders. Fragment shaders require all parameters to be fully
+specified. The parsing method begins by iterating through each component file in a specific order. It may not need to draw from all
+the files depending on the parameter settings (for example, if shadows are disabled, then neither v_shadow.glsl or f_shadow.glsl will
+be read).
+
+Vertex Component Call Order:
+    1. v_rendering.glsl
+    2. v_texture.glsl
+    3. v_rendering.glsl
+
+Fragment Component Call Order:
+    1. f_rendering.glsl
+    2. f_output.glsl
+    3. f_texture.glsl
+EITHER:
+    4. f_lighting.glsl
+    5. f_shadow.glsl
+    6. f_material.glsl
+OR:
+    4. f_postprocessing.glsl
+
+The parsing methods will read each file as follows. It will first look for a flag, "@@" and keyword in all caps. It will then look for
+the closing flag "@@". Everything between these flags will be copied. The "GENERAL" keyword will always be searched regardless of
+the shader parameters. If there is code that always belongs in a shader of a given type, it should be included under the "GENERAL"
+section. A second keyword will also be searched depending on the parameter. This will handle code snippets that must vary depending on
+parameter choice. As these code snippets are copied and concatenated, they will be copied in the order given above.
+
+Next, the parsing method will rearrange the code according to structural sections. The sections are as follows:
+    1. GLOBAL: Used to make global declarations with "#define" or define global variables.
+    2. STRUCTS: Used to declare structs.
+    3. IN: Used to declare "in" variables, and in the case of vertex shaders, declare layout positions.
+    4. OUT: Used to declare "out" variables.
+    5. UNIFORMS: Used to declare uniforms.
+    6. FUNCTIONS: Used to declare and define functions that are not the main function.
+    7. MAIN: Used to declare and define the main function.
+Sections are flagged using '@' and the keywords are the section names listed above in all caps. Sections are closed with a '@' flag.
+Each component can make additions to any section. The parser will look for each section flag one at a time in the above order. Each
+section flag may appear multiple times for each component. The order in which they appear is defined by the order in which the
+components are parsed. The parser will copy the code that appears within the section flag into a single string for each section.
+
+Next, the parsing method will look for placeholder code snippets. Placeholder snippets are flagged with either a "&&" or a '&' and have
+a keyword that is written in lower case. The keyword should immediately be followed by a closing flag identicle to the opening flag.
+The parser will then look for a recurrence of the flag-keyword combo at a later point in the section, followed by a line-break. Once it 
+has found this, it will look for the closing flag and copy anything contained within to the location of the first flag-keyword-flag 
+combination. The placeholder can also occur after its replacement. For example:
+This code snippet:
+    func(&var_name&);
+    func2(x);
+    &var_name
+    ...&
+Would be replaced with:
+    func(...);
+    func2(x);
+
+The presence of a line-break is important for distinguishing between a placeholder value and its replacement. If there is a line-break,
+the parser will interpret the text before the line break as a placeholder name and the text after as replacement text. If there is no
+line-break, the parser will interpret the text as a placeholder name.
+
+The parser will look for all the placeholders flagged with "&&" before it looks for any that are flagged with '&'. This allows us to 
+have a single layer of nesting. For example:
+This code snippet:
+    &&var_name1&&
+    &&var_name1
+    func(&var_name2&);&&
+    &var_name2
+    ...&
+Would first be replaced by:
+    func(&var_name2&);
+    &var_name2
+    ...&
+And then be replaced by:
+    func(...);
+
+The nesting can also occur in the opposite order at the result will be the same. A double nesting would not work.
+
+The parser will concatenate the sections in the order specified above.
+
+Finally, the parser will replace the '$' flag with code defined at runtime. This is used to specify layout positions. Sometimes, we
+cannot know the order layout declarations are going to occur in. As such, the parser will simply replace the first '$' with 0 and 
+increment by 1 for each subsequent '$' that is found.
+
+The resulting code will be compiled as a shader.

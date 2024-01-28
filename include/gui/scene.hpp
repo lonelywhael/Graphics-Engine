@@ -37,7 +37,7 @@
 
 class Scene {
 public:
-    // There is no constructor since elements should be added to the scene individually.
+    // 
     Scene(std::shared_ptr<Camera> camera, const std::string& file_name);
     Scene(const int width, const int height, const int pixelWidth, std::shared_ptr<Camera> camera)
             : viewportWidth(width), viewportHeight(height), pixelWidth(pixelWidth), camera(camera) {}

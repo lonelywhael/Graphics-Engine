@@ -1,6 +1,9 @@
 #include "gui/shader.hpp"
 
+// these paths are the locations of the shader save files and shader component files
 const char SHADER_SAVE_PATH[] = "../res/shaders/saves/", SHADER_COMPONENTS_PATH[] = "../res/shaders/components/";
+// these are keys that are used to parse component files so that specific code snippets can be found
+// structural keys are used for structural elements of the shader while all others are based on parameter specifications
 std::string GENERAL_KEY = "@@GENERAL",
             STRUCTURAL_KEYS[] = { "@GLOBAL\n", "@STRUCTS\n", "@IN\n", "@OUT\n", "@UNIFORMS\n", "@FUNCTIONS\n", "@MAIN\n" },
             RENDERING_KEYS[] = { "@@BASIC_2D", "@@BASIC_3D", "@@LIGHTING_3D", "@@SKYBOX"},
@@ -10,10 +13,12 @@ std::string GENERAL_KEY = "@@GENERAL",
             MATERIAL_KEYS[] = { "", "@@BASIC", "@@D_MAP", "@@DS_MAP", "@@DSE_MAP" },
             TEXTURE_KEYS[] = { "@@DISABLED", "@@BASIC_2D", "@@CUBE" },
             POSTPROCESSING_KEYS[] = { "@@DISABLED", "@@BLUR", "@@DEPTH_MAP", "@@LINEARIZED_DEPTH_MAP", "@@SHADOW_MAP"};
+// these are the names of shader component files (each corresponds to a shader parameter)
 std::string RENDERING_FILE = "rendering.glsl", OUTPUT_FILE = "output.glsl", LIGHTING_FILE = "lighting.glsl", 
             MATERIAL_FILE = "material.glsl", SHADOW_FILE = "shadow.glsl", TEXTURE_FILE = "texture.glsl", 
             POSTPROCESSING_FILE = "postprocessing.glsl";
 
+// this constructor takes shader parameters as inputs
 Shader::Shader(const unsigned int RENDERING_STYLE, const unsigned int OUTPUT_BUFFER,
                const unsigned int MATERIAL_STYLE, const unsigned int LIGHTING_STYLE, const unsigned int SHADOW_STYLE,
                const unsigned int TEXTURE_STYLE, const unsigned int POSTPROCESSING)
@@ -27,24 +32,29 @@ Shader::Shader(const unsigned int RENDERING_STYLE, const unsigned int OUTPUT_BUF
     #endif
 }
 Shader::Shader(Format& object) {
+    // read shader parameters from the format object (which allows for communication with json files)
     rendering_style = object["rendering_style"];
     output_buffer = object["output_buffer"];
     material_style = object["material_style"];
     lighting_style = object["lighting_style"];
     shadow_style = object["shadow_style"];
     texture_style = object["texture_style"];
-    postprocessing = object["postprocessing"];
+    postprocessing = object["postprocessing"]; 
 
+    // create shader obeject in the openGL context and retrieve integer id with which to reference it
     programID = glCreateProgram();
     #if DEBUG_OPENGL_OBJECTS 
         std::cout << "Shader " << programID << " was created." << std::endl;
     #endif
 }
 void Shader::load() {
+    // generate unique shader file names based on the shader parameters
     std::string v_shader_name = genVertexShaderName(), f_shader_name = genFragmentShaderName();
+    // if there are already shader files that have this name in the save directory, load those files, otherwise create new shaders
     v_source = (f_exists(SHADER_SAVE_PATH + v_shader_name)) ? loadFile(v_shader_name, SHADER_SAVE_PATH) : generateVertexShader();
     f_source = (f_exists(SHADER_SAVE_PATH + f_shader_name)) ? loadFile(f_shader_name, SHADER_SAVE_PATH) : generateFragmentShader();
 
+    // compile the shaders and then link them together
     unsigned int vertexShader = compileShader(v_source, GL_VERTEX_SHADER), fragmentShader = compileShader(f_source, GL_FRAGMENT_SHADER);
     createProgram(vertexShader, fragmentShader); 
 }
@@ -58,6 +68,7 @@ Shader::~Shader() {
 
 
 bool Shader::operator==(const Shader& compare) {
+    // Shaders are unique based on their parameter settings. Check for equality between those.
     return rendering_style == compare.rendering_style && output_buffer == compare.output_buffer &&
            material_style == compare.material_style && lighting_style == compare.lighting_style &&
            shadow_style == compare.shadow_style && texture_style == compare.texture_style && postprocessing == compare.postprocessing;
@@ -65,42 +76,33 @@ bool Shader::operator==(const Shader& compare) {
 
 
 bool Shader::createProgram(const unsigned int& vertexShader, const unsigned int& fragmentShader) {
+    // Checks if shaders were successfully linked
     bool success = true;
     // link individual shaders into a single program
     glAttachShader(programID, vertexShader);    //attach vertex shader to program
     glAttachShader(programID, fragmentShader);  //attach fragment shader to program
     glLinkProgram(programID);                   //link program
+    // if there are errors, print for debugging
     if (!checkLinkingErrors()) {
         glDeleteProgram(programID);
         success = false;
         printSource(v_source);
         printSource(f_source);
     }
-    // free memory allocated to the individual shaders
+    // remove compiled shaders from the OpenGL objects, we only need the linked binary
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
     return success;
 }
-const unsigned int Shader::compileShader(const std::string& source, const unsigned int type) {
-    // create a shader object in the openGL context and compile the shader, then return the shader id
-    const unsigned int shaderID = glCreateShader(type);
-    const char* const _source = source.c_str();
-    glShaderSource(shaderID, 1, &_source, NULL);
-    glCompileShader(shaderID);
-    if (!checkCompilationErrors(shaderID)) {
-        print();
-        printSource(source);
-    }
-
-    return shaderID;
-}
+const unsigned int Shader::compileShader(const std::string& source, const unsigned int type) { return compileShader(source, type, ""); }
 const unsigned int Shader::compileShader(const std::string& source, const unsigned int type, const std::string fileName) {
     // create a shader object in the openGL context and compile the shader, then return the shader id
     const unsigned int shaderID = glCreateShader(type);
     const char* const _source = source.c_str();
     glShaderSource(shaderID, 1, &_source, NULL);
     glCompileShader(shaderID);
+    // check for compilation errors, but don't stop the program. This will cause the error to cascade to the linking step.
     if (!checkCompilationErrors(shaderID, fileName)) {
         print();
         printSource(source);
@@ -108,17 +110,7 @@ const unsigned int Shader::compileShader(const std::string& source, const unsign
 
     return shaderID;
 }
-bool Shader::checkLinkingErrors() const {
-    // OpenGL keeps track of linking errors and they can be printed.
-    int success;
-    char infoLog[512];
-    glGetProgramiv(programID, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(programID, 512, NULL, infoLog);
-        std::cout << "ERROR::PROGRAM::LINKER_FAILED:\n" << infoLog << std::endl;
-    }
-    return success;
-}
+bool Shader::checkLinkingErrors() const { return checkLinkingErrors("(not recorded)", "(not recorded)"); }
 bool Shader::checkLinkingErrors(const std::string vFilePath, const std::string fFilePath) const {
     // OpenGL keeps track of linking errors and they can be printed.
     int success;
@@ -133,17 +125,7 @@ bool Shader::checkLinkingErrors(const std::string vFilePath, const std::string f
     }
     return success;
 }
-bool Shader::checkCompilationErrors(const unsigned int shader) const {
-    // OpenGL keeps track of compilation errors as well.
-    int success;
-    char infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if(!success) {
-        glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::COMPILATION_FAILED: " << infoLog << std::endl;
-    }
-    return success;
-}
+bool Shader::checkCompilationErrors(const unsigned int shader) const { return checkCompilationErrors(shader, "(path not recorded)"); }
 bool Shader::checkCompilationErrors(const unsigned int shader, const std::string filePath) const {
     // OpenGL keeps track of compilation errors as well.
     int success;
@@ -156,9 +138,8 @@ bool Shader::checkCompilationErrors(const unsigned int shader, const std::string
     return success;
 }
 
-
 void Shader::setUniform(std::shared_ptr<Material> material) const {
-    // Read from a material struct and copy data to the identical sub-struct in the shader program. Uniforms are dependent on material type.
+    // Read from a material struct and copy data to the identical struct in the shader program. Uniforms are dependent on material type.
     switch(material->type) {
     case M_BASIC: {
         setUniform(MAT_NAME[M_BASIC] + ".ambient", material->basicMat.ambient);
@@ -201,8 +182,9 @@ void Shader::setUniform(const std::string &name, const Light& light, const glm::
     setUniform(name + ".shadowMap", light.getShadowMapSlot());
 }
 
-
+// TODO fix naming convention for "getJSON" methods
 Format Shader::getJSON() {
+    // save shader parameters to a format object, which will convert them to a json or can be added to a scene object
     Format object;
     object["rendering_style"] = rendering_style;
     object["output_buffer"] = output_buffer;
@@ -212,18 +194,23 @@ Format Shader::getJSON() {
     object["texture_style"] = texture_style;
     object["postprocessing"] = postprocessing;
 
+    // TODO - offload to file saving method
+    // create unique file names based on parameters
     std::string v_path = std::string(SHADER_SAVE_PATH) + genVertexShaderName(), 
                 f_path = std::string(SHADER_SAVE_PATH) + genFragmentShaderName();
 
+    // check if there are files that have those names already, if not make ones
     if (!f_exists(v_path)) f_write(v_path, v_source.c_str(), v_source.length(), TXT);
     if (!f_exists(f_path)) f_write(f_path, f_source.c_str(), f_source.length(), TXT);
 
     return object;
 }
+// TODO - this should be in io/file_io.hpp
 std::string Shader::loadFile(std::string fileName, std::string path) {
     // add shader directory root to the fileName
     std::string filePath = path + fileName;
 
+    // read text from the file at the file path to a c_string 
     auto [source, size] = f_read(filePath, TXT);
     std::string contents = std::string(source, size);
     delete[] source;
@@ -231,91 +218,106 @@ std::string Shader::loadFile(std::string fileName, std::string path) {
     return contents;
 }
 std::string Shader::genVertexShaderName() {
+    // note: not all parameters are needed to fully specify a vertex shader
+
+    // concatenate a string with various components that indicate what kind of vertex shader it is
+    // "v" marks that this is a vertex shader
     std::string v_shader_name = "v";
+    // rendering strategy determines whether other parameters will be used
     switch(rendering_style) {
     case R_BASIC_2D: { v_shader_name += "_2D"; } break;
     case R_BASIC_3D: { v_shader_name += "_3D"; } break;
     case R_LIGHTING_3D: { 
-        v_shader_name += "_lighting_3D"; 
+        v_shader_name += "_l3D";
+        // if there is lighting, there might also be shadows (if nothing, then shadows are disabled)
         switch(shadow_style) {
-        case S_SHADOW_MAPPING: { v_shader_name += "_sm"; } break;
+        case S_SHADOW_MAPPING: { v_shader_name += "_ssmap"; } break;
         }
     } break;
-    case R_SKYBOX: { v_shader_name += "_skybox"; } break;
+    case R_SKYBOX: { v_shader_name += "_box"; } break;
     }
 
+    // textures can appear in a number of rendering strategies (if nothing, then textures are disabled)
     switch(texture_style) {
-    case T_BASIC_2D: { v_shader_name += "_textured"; } break;
-    case T_CUBE: { v_shader_name += "_textured_c"; } break;
+    case T_BASIC_2D: { v_shader_name += "_t2D"; } break;
+    case T_CUBE: { v_shader_name += "_tcube"; } break;
     }
+    // make sure to place in vertex shader folder and add the correct file type
     return "v_shaders/" + v_shader_name + ".glsl";
 }
 std::string Shader::genFragmentShaderName() {
+    // concatenate a string with various components that indicate what kind of fragment shader it is
+    // "f" marks that this is a vertex shader
     std::string f_shader_name = "f";
+    // rendering strategy determines whether other parameters will be used
     switch(rendering_style) {
     case R_BASIC_2D: { f_shader_name += "_2D"; } break;
     case R_BASIC_3D: { f_shader_name += "_3D"; } break;
     case R_LIGHTING_3D: { 
-        f_shader_name += "_lighting_3D"; 
+        // if there is lighting, we will also need a lighting style, material style, and shadow style
+        f_shader_name += "_l3D"; 
         switch(lighting_style) {
-        case L_DIR: { f_shader_name += "_d"; } break;
-        case L_POINT: { f_shader_name += "_p"; } break;
-        case L_SPOT: { f_shader_name += "_s"; } break;
-        case L_DIR_POINT: { f_shader_name += "_dp"; } break;
-        case L_DIR_SPOT: { f_shader_name += "_ds"; } break;
-        case L_POINT_SPOT: { f_shader_name += "_ps"; } break;
-        case L_ALL_ENABLED: { f_shader_name += "_dps"; } break;
+        case L_DIR: { f_shader_name += "_ld"; } break;
+        case L_POINT: { f_shader_name += "_lp"; } break;
+        case L_SPOT: { f_shader_name += "_ls"; } break;
+        case L_DIR_POINT: { f_shader_name += "_ldp"; } break;
+        case L_DIR_SPOT: { f_shader_name += "_lds"; } break;
+        case L_POINT_SPOT: { f_shader_name += "_lps"; } break;
+        case L_ALL_ENABLED: { f_shader_name += "_ldps"; } break;
         }
         switch(material_style) {
-        case M_BASIC: { f_shader_name += "_basic_mat"; } break;
-        case M_D_MAP: { f_shader_name += "_d_map"; } break;
-        case M_DS_MAP: { f_shader_name += "_ds_map"; } break;
-        case M_DSE_MAP: { f_shader_name += "_dse_map"; } break;
+        case M_BASIC: { f_shader_name += "_mbas"; } break;
+        case M_D_MAP: { f_shader_name += "_mdmap"; } break;
+        case M_DS_MAP: { f_shader_name += "_mdsmap"; } break;
+        case M_DSE_MAP: { f_shader_name += "_mdsemap"; } break;
         }
         switch(shadow_style) {
-        case S_SHADOW_MAPPING: { f_shader_name += "_sm"; } break;
+        case S_SHADOW_MAPPING: { f_shader_name += "_ssmap"; } break;
         }
     } break;
-    case R_SKYBOX: { f_shader_name += "_skybox"; } break;
+    case R_SKYBOX: { f_shader_name += "_box"; } break;
     }
+    // next, specify output buffer (if there is nothing, that means it is a color buffer)
     switch(output_buffer) {
-    case B_DEPTH: { f_shader_name += "_depth"; } break;
-    case B_STENCIL: { f_shader_name += "_stencil"; } break;
+    case B_DEPTH: { f_shader_name += "_dbuf"; } break;
+    case B_STENCIL: { f_shader_name += "_sbuf"; } break;
     }
+    // then texture styles (if nothing, then textures are disabled)
     switch(texture_style) {
-    case T_BASIC_2D: { f_shader_name += "_textured"; } break;
-    case T_CUBE: { f_shader_name += "_textured_c"; } break;
+    case T_BASIC_2D: { f_shader_name += "_t2D"; } break;
+    case T_CUBE: { f_shader_name += "_tcube"; } break;
     }
+    // then postprocessing strategy (if nothing, then postprocessing is disabled)
     switch(postprocessing) {
-    case P_BLUR: { f_shader_name += "_blur"; } break;
-    case P_SHADOW_MAP: { f_shader_name += "_s_map"; } break;
-    case P_DEPTH_MAP: { f_shader_name += "_d_map"; } break;
-    case P_LINEARIZED_DEPTH_MAP: { f_shader_name += "_ld_map"; } break;
+    case P_BLUR: { f_shader_name += "_pblur"; } break;
+    case P_SHADOW_MAP: { f_shader_name += "_psmap"; } break;
+    case P_DEPTH_MAP: { f_shader_name += "_pdmap"; } break;
+    case P_LINEARIZED_DEPTH_MAP: { f_shader_name += "_pldmap"; } break;
     }
     return "f_shaders/" + f_shader_name + ".glsl";
 }
 
+std::string& Shader::generateVertexShader() {
+    // Version declaration
+    v_source = getVersion();
 
-std::string Shader::generateVertexShader() {
-    std::string v_source = "#version " + std::to_string((int) (VERSION * 100)) + " ";
-    switch(PROFILE) {
-    case P_CORE: { v_source += "core"; } break;
-    }
-    v_source += "\n";
-
-    std::vector<std::unique_ptr<std::string>> v_components;
+    // iterate through various component files, each of which corresponds to a shader parameter. Each element in the array corresponds 
+    // a section, which is indicated by a structural key.
+    std::string v_components = "";
+    //std::vector<std::unique_ptr<std::string>> v_components;
     addComponent(v_components, RENDERING_FILE, RENDERING_KEYS[rendering_style], GL_VERTEX_SHADER);
     addComponent(v_components, TEXTURE_FILE, TEXTURE_KEYS[texture_style], GL_VERTEX_SHADER);
     if (rendering_style == R_LIGHTING_3D)
         addComponent(v_components, SHADOW_FILE, SHADOW_KEYS[shadow_style], GL_VERTEX_SHADER);
 
-    for (std::string key : STRUCTURAL_KEYS) {
-        std::string section = "";
-        for (int c = 0; c < v_components.size(); c++) section += getKeyedSection(*v_components[c], '@', key);
-        defineVars(section, "&&");
-        defineVars(section, '&');
-        if (section.length() > 0) v_source += '\n' + section;
-    }
+    // once all components are added, they will need to be arranged into the proper order and placeholder sections will need to be with
+    // the correct code snippets.
+    // the code with be rearranged by section such that each section has the appropriate code snippets from each component in the order
+    // the components were added above.
+    assembleSource(v_source, v_components);
+
+    // some placeholders are indicated by a '$'. These are used to specify layout positions. Layout positions must occur in
+    // in incrementing order, so we simply set them to an incrementing value for each one we find.
     size_t c = 0, pos = v_source.find('$');
     while(pos != std::string::npos) {
         v_source.replace(pos, 1, std::to_string(c++));
@@ -324,16 +326,14 @@ std::string Shader::generateVertexShader() {
 
     return v_source;
 }
-std::string Shader::generateFragmentShader() {
+std::string& Shader::generateFragmentShader() {
     // version declaration
-    f_source = "#version " + std::to_string((int) (VERSION * 100)) + " ";
-    switch(PROFILE) {
-    case P_CORE: { f_source += "core"; } break;
-    }
-    f_source += "\n";
+    f_source = getVersion();
 
-    std::vector<std::unique_ptr<std::string>> f_components;
+    std::string f_components = "";
+    //std::vector<std::unique_ptr<std::string>> f_components;
 
+    // similar to above, though there are more parameters that must be specified
     addComponent(f_components, RENDERING_FILE, RENDERING_KEYS[rendering_style], GL_FRAGMENT_SHADER);
     addComponent(f_components, OUTPUT_FILE, OUTPUT_KEYS[output_buffer], GL_FRAGMENT_SHADER);
     addComponent(f_components, TEXTURE_FILE, TEXTURE_KEYS[texture_style], GL_FRAGMENT_SHADER);
@@ -344,28 +344,50 @@ std::string Shader::generateFragmentShader() {
     } else 
         addComponent(f_components, POSTPROCESSING_FILE, POSTPROCESSING_KEYS[postprocessing], GL_FRAGMENT_SHADER);
 
-    for (std::string key : STRUCTURAL_KEYS) {
-        std::string section = "";
-        for (int c = 0; c < f_components.size(); c++) section += getKeyedSection(*f_components[c], '@', key);
-        defineVars(section, "&&");
-        defineVars(section, '&');
-        if (section.length() > 0) f_source += '\n' + section;
-    }
+    // as above
+    assembleSource(f_source, f_components);
 
     return f_source;
 }
-void Shader::addComponent(std::vector<std::unique_ptr<std::string>>& components, 
-                          const std::string fileName, const std::string key, const unsigned int shaderType) {
+std::string Shader::getVersion() {
+    std::string version;
+    // GLSL version parameters are set at the top of shader code (e.g., "#version 330 core"). These values are saved in elements.cpp
+    version = "#version " + std::to_string((int) (VERSION * 100)) + " ";
+    switch(PROFILE) {
+    case P_CORE: { version += "core"; } break;
+    }
+    version += "\n";
+
+    return version;
+}
+void Shader::addComponent(std::string& components, const std::string fileName, const std::string key, const unsigned int shaderType) {
+    // specify between vertex and fragment components
     std::string _fileName;
     switch(shaderType) {
     case GL_VERTEX_SHADER: { _fileName = "v_" + fileName; } break;
     case GL_FRAGMENT_SHADER: { _fileName = "f_" + fileName; } break;
     }
+    // load file
     std::string source = loadFile(_fileName, SHADER_COMPONENTS_PATH);
-    if (contains(source, GENERAL_KEY)) components.push_back(std::make_unique<std::string>(getKeyedSection(source, "@@", GENERAL_KEY)));
-    components.push_back(std::make_unique<std::string>(getKeyedSection(source, "@@", key)));
+    // some component files have snippets that are needed regardless of shader parameters, which are accessed with the general key
+    if (contains(source, GENERAL_KEY)) components += getKeyedSection(source, "@@", GENERAL_KEY);
+    // otherwise, only copy the code associated with the specified key
+    components += getKeyedSection(source, "@@", key);
 }
-void Shader::defineVars(std::string& section, char flag) {
+void Shader::assembleSource(std::string& source, const std::string components) {
+    for (std::string key : STRUCTURAL_KEYS) {
+        std::string section = "";
+        int c = components.find(key);
+        while(c != std::string::npos) {
+            section += getKeyedSection(components.substr(c), '@', key);
+            c = components.find(key, c + 1);
+        }
+        fillPlaceholders(section, "&&");
+        fillPlaceholders(section, '&');
+        if (section.length() > 0) source += '\n' + section;
+    }
+}
+void Shader::fillPlaceholders(std::string& section, char flag) {
     while(contains(section, flag)) {
         size_t var_start = section.find(flag), var_end = section.find(flag, var_start + 1), fill_start = 0, fill_end = 0;
         std::string var = section.substr(var_start, var_end - var_start), fill = "";
@@ -397,7 +419,7 @@ void Shader::defineVars(std::string& section, char flag) {
         }
     }
 }
-void Shader::defineVars(std::string& section, std::string flag) {
+void Shader::fillPlaceholders(std::string& section, std::string flag) {
     while(contains(section, flag)) {
         size_t var_start = section.find(flag), var_end = section.find(flag, var_start + 1), fill_start = 0, fill_end = 0;
         std::string var = section.substr(var_start, var_end - var_start), fill = "";
