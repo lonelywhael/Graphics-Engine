@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-#include "../io/format.hpp"
+#include "../io/serializer.hpp"
 
 #include "camera.hpp"
 #include "frame_buffer.hpp"
@@ -37,7 +37,7 @@ class RenderGroup {
 public:
     RenderGroup(std::shared_ptr<Shader> shader) : shader(shader)
         { for (int l = 0; l < MAX_LIGHTS; l++) l_view.push_back(glm::mat4(1.0f)); }
-    RenderGroup(Format& object);
+    RenderGroup(Serializer& object);
 
     // models, lights and cameras are specified later
     void addModel(std::shared_ptr<Model> model);
@@ -65,7 +65,7 @@ public:
     void setCamProj(glm::mat4 c_proj) { this->c_proj = c_proj; }
     void setLightView(glm::mat4 l_view, const int l) { this->l_view.at(l) = l_view; }
 
-    Format getJSON();
+    Serializer getJSON();
 
     void print(int tab) const;
     void printRenderSequence() const;

@@ -10,7 +10,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "../io/file_io.hpp"
-#include "../io/format.hpp"
+#include "../io/parser.hpp"
+#include "../io/serializer.hpp"
 
 #include "elements.hpp"
 #include "light.hpp"
@@ -19,12 +20,33 @@
 /* TODO - specific uniforms are needed by specific snippets of glsl files. Can create uniform objects (strings and values) that
  * need to be set or there is an error.
  */
-/* TODO - some of these parsing functions might be better suited in a separate io header
- */
 
 
-/* SHADER CLASS
+/* Shaders are scripts that run on the GPU kernal. They are meant to be highly parallelized and simple. The shader class makes handling
+ * shaders easy by generating shader script based on a set of shader parameters and handling all interaction with shaders in the OpenGL
+ * context.
  * 
+ * Shaders are constructed by specifying the values of these parameters. Enumerated lists of possible values can be found in
+ * elements.hpp. The values of parameters can also be read from a format object that was created by the "getJSON()." The constructor
+ * will also create a shader program object in the OpenGL context which will only die once the shader is destroyed.
+ * 
+ * Shader parameters uniquely define the shader object. If two shaders have the same parameters, they will have the same shader script 
+ * because the parsing function is deterministic. As such, before running the rather expensive parsing method, it may be beneficial to
+ * compare shader parameters across multiple shaders to make sure there are no duplicates using the "==" operator.
+ * 
+ * If no duplicate shaders are found, one can proceed to call the "load()" method, which will retrieve or assemble the shader script
+ * for all sub-shader programs (e.g., vertex and fragment shaders), then compile and link them together and bind them to the OpenGL
+ * context.
+ * 
+ * For each shader, load() will first attempt to find shaders that already exist that match the shader parameters in 
+ * /res/shaders/saves/. Saved shaders have file names that are also completely determined by their shader parameters. Loading from these
+ * files is faster than creating the shader scripts from scratch. If this fails, then load() will call the appropriate genShader()
+ * method which will piece together snippets of code from /res/shaders/components/. Once the shader source code is obtained, then
+ * load() will attempt to compile the code and link the various shaders together.
+ * 
+ * Once the shader program is successfully compiled and bound to the openGL context, the shader object can also be used to interact
+ * with the shader program in the OpenGL context. The "use()" method binds the shader program in the OpenGL context so it can be used
+ * for rendering. The "setUniform()" method is used to update shader uniform variable values.
  */
 class Shader {
 public:
@@ -33,7 +55,7 @@ public:
            const unsigned int MATERIAL_STYLE, const unsigned int LIGHTING_STYLE, const unsigned int SHADOW_STYLE,
            const unsigned int TEXTURE_STYLE, const unsigned int POSTPROCESSING);
     // Shader can also recieve a format object that converts from the json file format to an object.
-    Shader(Format& object);
+    Shader(Serializer& object);
     // The load function completes the construction of the shader after it has been determined that there are no duplicates already.
     void load();
     // Need to make sure the shader is removed from the OpenGL context when it is destroyed
@@ -84,7 +106,7 @@ public:
     const unsigned int getPostprocessing() const { return postprocessing; }
 
     // Encode a format object with data that can be used to recreate the shader. The format object can save object data in a json file.
-    Format getJSON();
+    Serializer getJSON();
 
     // Print information about shader parameters
     void print() const;
@@ -147,33 +169,12 @@ private:
     // This function orders the list of input components then replaces placeholder values with actual code. The result is (almost) 
     // source code.
     void assembleSource(std::string& source, const std::string components);
-    // 
+    // A number of placeholder terms will exist in section code that is not compilable. This function will find placeholders then
+    // replace them with the code snippets that actually belongs there.
     void fillPlaceholders(std::string& section, char flag);
+    // A number of placeholder terms will exist in section code that is not compilable. This function will find placeholders then
+    // replace them with the code snippets that actually belongs there.
     void fillPlaceholders(std::string& section, std::string flag);
-    // this function finds a specific keyed section within a component file
-    // TODO this is a parsing function
-    std::string getKeyedSection(const std::string string, const char flag, const std::string key) 
-        { return (contains(string, key) ? substr(string, flag, key) : ""); }
-    std::string getKeyedSection(std::string string, std::string flag, std::string key) 
-        { return (contains(string, key) ? substr(string, flag, key) : ""); }
-    // this function returns whether or not a string contains a variable
-    // TODO this is a parsing function
-    bool contains(std::string string, char key) { return (string.find(key) != std::string::npos); }
-    bool contains(std::string string, std::string key) { return (string.find(key) != std::string::npos); }
-    // this function returns a substring from a larger string by finding a flag
-    // TODO this is a parsing function
-    std::string substr(std::string string, char flag, char key) {
-        size_t start = string.find(key) + 1, end = string.find(flag, start);
-        return string.substr(start, end - start);
-    }
-    std::string substr(std::string string, char flag, std::string key) {
-        size_t start = string.find(key) + key.length(), end = string.find(flag, start);
-        return string.substr(start, end - start);
-    }
-    std::string substr(std::string string, std::string flag, std::string key) {
-        size_t start = string.find(key) + key.length(), end = string.find(flag, start);
-        return string.substr(start, end - start);
-    }
 
     // this function prints source code in a user friendly way (for debugging)
     void printSource(std::string source);

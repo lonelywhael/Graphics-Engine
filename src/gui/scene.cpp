@@ -3,8 +3,8 @@
 const std::string SCENE_PATH = "../res/scenes/";
 
 Scene::Scene(std::shared_ptr<Camera> camera, const std::string& file_name) : camera(camera) {
-    Format object = Format(SCENE_PATH + file_name);
-    frame = std::make_unique<Frame>(static_cast<Format&>(object["frame"]));
+    Serializer object = Serializer(SCENE_PATH + file_name);
+    frame = std::make_unique<Frame>(static_cast<Serializer&>(object["frame"]));
 }
 
 const std::shared_ptr<RenderGroup> Scene::addRenderGroup(unsigned int index, std::shared_ptr<Shader> shader) {
@@ -335,7 +335,7 @@ void Scene::draw() {
 }
 
 void Scene::save(const std::string& file_name) {
-    Format object;
+    Serializer object;
 
     for (int rg = 0; rg < renderGroups.size(); rg++) {
         bool add_new = true;

@@ -1,11 +1,11 @@
 #include "gui/model.hpp"
 
-Model::Model(Format& object) {
-    vertexArray = std::make_shared<VertexArray>(static_cast<Format&>(object["vertex_array"]));
+Model::Model(Serializer& object) {
+    vertexArray = std::make_shared<VertexArray>(static_cast<Serializer&>(object["vertex_array"]));
     textureGroup = (object["textureGroup"] != nullptr) ? 
-                            std::make_shared<TextureGroup>(static_cast<Format&>(object["texture_group"])) : 
+                            std::make_shared<TextureGroup>(static_cast<Serializer&>(object["texture_group"])) : 
                             nullptr;
-    material = (object["material"] != nullptr) ? std::make_shared<Material>(static_cast<Format&>(object["material"])) : nullptr;
+    material = (object["material"] != nullptr) ? std::make_shared<Material>(static_cast<Serializer&>(object["material"])) : nullptr;
     pos = object["pos"];
     scale = object["scale"];
     aos = object["aos"];
@@ -41,8 +41,8 @@ const glm::vec3 DEFAULT_SPECULAR(0.2f);
 const float DEFAULT_SHININESS = 16;
 void Model::generateMaterial(const float shininess) { generateMaterial(DEFAULT_SPECULAR, (shininess > 0.0f) ? shininess : DEFAULT_SHININESS); }
 
-Format Model::getJSON() {
-    Format object;
+Serializer Model::getJSON() {
+    Serializer object;
     object["vertex_array"] = std::move(vertexArray->getJSON());
     (textureGroup != nullptr) ? object["texture_group"] = std::move(textureGroup->getJSON()) : object["textureGroup"] = nullptr;
     (material != nullptr) ? object["material"] = std::move(material->getJSON()) : object["material"] = nullptr;

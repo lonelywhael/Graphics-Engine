@@ -125,7 +125,7 @@ Texture::Texture(const unsigned int textureFormat, const std::string file_name, 
     // unbind the texture
     glBindTexture(textureFormat, 0);
 }
-Texture::Texture(Format object) 
+Texture::Texture(Serializer object) 
     : Texture(static_cast<unsigned int>(object["texture_format"]), 
               static_cast<std::string>(object["file_name"]), static_cast<std::string>(object["extension"]),
               static_cast<unsigned int>(object["filter"]), static_cast<unsigned int>(object["wrapper"]),
@@ -200,8 +200,8 @@ void Texture::setWrapper(const unsigned int value) {
     if (textureFormat == TEXTURE_CUBE) setParameter(GL_TEXTURE_WRAP_R, value);
 }
 
-Format Texture::getJSON() const {
-    Format object;
+Serializer Texture::getJSON() const {
+    Serializer object;
     object["texture_format"] = textureFormat;
     object["file_name"] = file_name;
     object["extension"] = extension;
@@ -246,10 +246,10 @@ void Texture::print() {
 }
 
 
-TextureGroup::TextureGroup(Format& object) {
+TextureGroup::TextureGroup(Serializer& object) {
     nextSlot = object["first_slot"];
     for (int i = 0; i < object["textures"].size(); i++)
-        addTexture(std::make_shared<Texture>(static_cast<Format&>(object["textures"][i])));
+        addTexture(std::make_shared<Texture>(static_cast<Serializer&>(object["textures"][i])));
 }
 
 bool TextureGroup::operator==(TextureGroup& other) {
@@ -259,8 +259,8 @@ bool TextureGroup::operator==(TextureGroup& other) {
 }
 bool TextureGroup::operator==(Texture& other) { return textures.size() == 1 && *textures[0] == other; }
 
-Format TextureGroup::getJSON() {
-    Format object;
+Serializer TextureGroup::getJSON() {
+    Serializer object;
     object["first_slot"] = getSlot(0);
     for (int i = 0; i < textures.size(); i++) object["textures"][i] = std::move(getTexture(i)->getJSON());
 

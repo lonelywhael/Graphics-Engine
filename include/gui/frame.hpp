@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "../io/format.hpp"
+#include "../io/serializer.hpp"
 
 #include "elements.hpp"
 #include "frame_buffer.hpp"
@@ -20,7 +20,7 @@ class Frame {
 public:
     Frame() : frameBuffer(nullptr) {}
     Frame(std::unique_ptr<FrameBuffer>&& frameBuffer) : frameBuffer(std::move(frameBuffer)) {}
-    Frame(Format& object);
+    Frame(Serializer& object);
 
     void addRenderGroup(std::shared_ptr<RenderGroup> renderGroup) { renderGroups.push_back(renderGroup); }
     int addFrame(std::unique_ptr<Frame>&& frame);
@@ -33,7 +33,7 @@ public:
 
     void print(int tab) const;
 
-    virtual Format getJSON();
+    virtual Serializer getJSON();
 
 protected:
     std::unique_ptr<FrameBuffer> frameBuffer;
@@ -49,11 +49,11 @@ class Pane : public Frame {
 public:
     Pane(std::unique_ptr<FrameBuffer>&& frameBuffer);
     Pane(std::unique_ptr<FrameBuffer>&& frameBuffer, float posX, float posY, float dimX, float dimY);
-    Pane(Format object);
+    Pane(Serializer object);
 
     std::shared_ptr<Model> getPaneModel() const { return paneModel; }
 
-    virtual Format getJSON() override;
+    virtual Serializer getJSON() override;
 
 private:
     float paneDims[4] { -1.0f, -1.0f, 2.0f, 2.0f };

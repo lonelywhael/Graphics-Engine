@@ -1,0 +1,366 @@
+{
+    "regions" : [
+        {
+            "name" : "Grassy Plains",
+            "mean_temp" : 10,
+            "amp_temp" : 20,
+            "mean_precip" : 70,
+            "amp_precip" : 50,
+            "places" : [
+                {
+                    "name" : "Lush Pasture",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Windswept Fields",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Hidden Cove",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Copse of Trees",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "Rolling Hills",
+            "mean_temp" : 10,
+            "amp_temp" : 20,
+            "mean_precip" : 90,
+            "amp_precip" : 50,
+            "places" : [
+                {
+                    "name" : "Grassy Knolls",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Rocky Outcrop",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Quiet Lake",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Sulfur Springs",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "Barren Moors",
+            "mean_temp" : 2,
+            "amp_temp" : 17,
+            "mean_precip" : 45,
+            "amp_precip" : 15,
+            "places" : [
+                {
+                    "name" : "Craggy Cliffs",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Snowmelt Headwater",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Wooded Karst",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Hilly Shrubland",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "Tawny Steppe",
+            "mean_temp" : -2,
+            "amp_temp" : 17,
+            "mean_precip" : 40,
+            "amp_precip" : 35,
+            "places" : [
+                {
+                    "name" : "Sunset Badland",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Flowering Plains",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Tallgrass Prairie",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Brackish Sea",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "Coastal Woodland",
+            "mean_temp" : 18,
+            "amp_temp" : 8,
+            "mean_precip" : 100,
+            "amp_precip" : 50,
+            "places" : [
+                {
+                    "name" : "Sandy Bay",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "River Bend",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Foggy Valley",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Maritime Forest",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "River Valley",
+            "mean_temp" : 12,
+            "amp_temp" : 10,
+            "mean_precip" : 95,
+            "amp_precip" : 10,
+            "places" : [
+                {
+                    "name" : "Fern-Covered Cliffs",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Green Gorge",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Plunging Falls",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Lonely Lake",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "High Desert",
+            "mean_temp" : 22,
+            "amp_temp" : 17,
+            "mean_precip" : 15,
+            "amp_precip" : 15,
+            "places" : [
+                {
+                    "name" : "Dry Forest",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Sunburnt Valley",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Blackened Cliffs",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Clifftop Woods",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "Desert Basin",
+            "mean_temp" : 25,
+            "amp_temp" : 10,
+            "mean_precip" : 5,
+            "amp_precip" : 5,
+            "places" : [
+                {
+                    "name" : "Crawling Dunes",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Windward Coast",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Saltflat",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Rocky Gulch",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "Coastal Lowland",
+            "mean_temp" : 26,
+            "amp_temp" : 6,
+            "mean_precip" : 115,
+            "amp_precip" : 85,
+            "places" : [
+                {
+                    "name" : "Lushious Floodplain",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Blue Lagoon",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Swampy Delta",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Hummocky Wetland",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "Jungle Backwoods",
+            "mean_temp" : 22,
+            "amp_temp" : 7,
+            "mean_precip" : 180,
+            "amp_precip" : 80,
+            "places" : [
+                {
+                    "name" : "Hilly Rainforest",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Montane Forest",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Steaming Woods",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Viney Valley",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "Golden Foothills",
+            "mean_temp" : 20,
+            "amp_temp" : 10,
+            "mean_precip" : 75,
+            "amp_precip" : 70,
+            "places" : [
+                {
+                    "name" : "Rutted Scablands",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Paramo Peaks",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Cactus Forest",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Highland Oasis",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "Savannah Flatlands",
+            "mean_temp" : 22,
+            "amp_temp" : 6,
+            "mean_precip" : 80,
+            "amp_precip" : 70,
+            "places" : [
+                {
+                    "name" : "Woody Shrubland",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Knobby Rocks",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Red Mesa",
+                    "natural_resources" : [
+                    ]
+                },
+                {
+                    "name" : "Grassy Lowlands",
+                    "natural_resources" : [
+                    ]
+                }
+            ]
+        }
+    ],
+    "graph" : [
+        [ 1, 4 ],
+        [ 0, 5 ],
+        [ 3, 6 ],
+        [ 2, 7 ],
+        [ 0, 5, 8 ],
+        [ 1, 4, 6, 9 ],
+        [ 2, 5, 7, 10 ],
+        [ 3, 6, 11 ],
+        [ 4, 9 ],
+        [ 5, 8 ],
+        [ 6, 11 ],
+        [ 7, 10 ]
+    ]
+}

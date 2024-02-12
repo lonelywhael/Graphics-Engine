@@ -11,7 +11,7 @@ Material::Material(int diffuse, int specular, float shininess)
         : type(M_DS_MAP), dsMap({diffuse, specular, shininess}) {}
 Material::Material(int diffuse, int specular, int emission, float shininess)
         : type(M_DSE_MAP), dseMap({diffuse, specular, emission, shininess}) {}
-Material::Material(Format& object) {
+Material::Material(Serializer& object) {
     type = object["type"];
     switch(type) {
     case M_BASIC: {
@@ -61,8 +61,8 @@ bool Material::operator==(Material& other) {
     } return false;
 }
 
-Format Material::getJSON() {
-    Format object;
+Serializer Material::getJSON() {
+    Serializer object;
     object["type"] = type;
     switch(type) {
     case M_BASIC: {

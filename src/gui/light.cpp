@@ -5,7 +5,7 @@ const int MAX_LIGHTS = 4;
 // the uniform name for the light variable within shaders
 const std::string LIGHT_NAME = "lightList";
 
-Light::Light(Format& object) {
+Light::Light(Serializer& object) {
     type = object["type"];
     pos = object["pos"];
     dir = object["dir"];
@@ -72,8 +72,8 @@ void Light::setLightTransform(const glm::vec3 target) {
     lightTransform = lightProjection * lightView;
 }
 
-Format Light::getJSON() {
-    Format object;
+Serializer Light::getJSON() {
+    Serializer object;
     object["type"] = type;
     object["pos"] = pos;
     object["dir"] = dir;

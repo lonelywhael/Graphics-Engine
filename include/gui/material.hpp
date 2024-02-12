@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 
-#include "../io/format.hpp"
+#include "../io/serializer.hpp"
 
 #include "elements.hpp"
 
@@ -50,11 +50,11 @@ struct Material {
     Material(int diffuse, glm::vec3 specular, float shininess);
     Material(int diffuse, int specular, float shininess);
     Material(int diffuse, int specular, int emission, float shininess);
-    Material(Format& object);
+    Material(Serializer& object);
 
     bool operator==(Material& other);
 
-    Format getJSON();
+    Serializer getJSON();
 };
 
 #endif

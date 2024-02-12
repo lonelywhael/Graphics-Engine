@@ -1,11 +1,11 @@
 #include "gui/render_group.hpp"
 
-RenderGroup::RenderGroup(Format& object) {
-    shader = std::make_shared<Shader>(static_cast<Format&>(object["shader"]));
+RenderGroup::RenderGroup(Serializer& object) {
+    shader = std::make_shared<Shader>(static_cast<Serializer&>(object["shader"]));
     for (int i = 0; i < object["models"].size(); i++)
-        addModel(std::make_shared<Model>(static_cast<Format&>(object["models"][i])));
+        addModel(std::make_shared<Model>(static_cast<Serializer&>(object["models"][i])));
     for (int i = 0; i < object["lights"].size(); i++)
-        addLight(std::make_shared<Light>(static_cast<Format&>(object["lights"][i])));
+        addLight(std::make_shared<Light>(static_cast<Serializer&>(object["lights"][i])));
 }
 
 void RenderGroup::addModel(std::shared_ptr<Model> model) {
@@ -82,8 +82,8 @@ void RenderGroup::render() {
     }
 }
 
-Format RenderGroup::getJSON() {
-    Format object;
+Serializer RenderGroup::getJSON() {
+    Serializer object;
     object["shader"] = std::move(shader->getJSON());
     for (int i = 0; i < models.size(); i++) object["models"][i] = std::move(models[i]->getJSON());
     for (int i = 0; i < lights.size(); i++) object["lights"][i] = std::move(lights[i]->getJSON());

@@ -31,7 +31,7 @@ Shader::Shader(const unsigned int RENDERING_STYLE, const unsigned int OUTPUT_BUF
         std::cout << "Shader " << programID << " was created." << std::endl;
     #endif
 }
-Shader::Shader(Format& object) {
+Shader::Shader(Serializer& object) {
     // read shader parameters from the format object (which allows for communication with json files)
     rendering_style = object["rendering_style"];
     output_buffer = object["output_buffer"];
@@ -183,9 +183,9 @@ void Shader::setUniform(const std::string &name, const Light& light, const glm::
 }
 
 // TODO fix naming convention for "getJSON" methods
-Format Shader::getJSON() {
+Serializer Shader::getJSON() {
     // save shader parameters to a format object, which will convert them to a json or can be added to a scene object
-    Format object;
+    Serializer object;
     object["rendering_style"] = rendering_style;
     object["output_buffer"] = output_buffer;
     object["material_style"] = material_style;
@@ -200,8 +200,8 @@ Format Shader::getJSON() {
                 f_path = std::string(SHADER_SAVE_PATH) + genFragmentShaderName();
 
     // check if there are files that have those names already, if not make ones
-    if (!f_exists(v_path)) f_write(v_path, v_source.c_str(), v_source.length(), TXT);
-    if (!f_exists(f_path)) f_write(f_path, f_source.c_str(), f_source.length(), TXT);
+    if (!f_exists(v_path)) f_writeText(v_path, v_source);
+    if (!f_exists(f_path)) f_writeText(f_path, f_source);
 
     return object;
 }
@@ -211,9 +211,8 @@ std::string Shader::loadFile(std::string fileName, std::string path) {
     std::string filePath = path + fileName;
 
     // read text from the file at the file path to a c_string 
-    auto [source, size] = f_read(filePath, TXT);
-    std::string contents = std::string(source, size);
-    delete[] source;
+    std::string contents;
+    f_readText(filePath, contents);
 
     return contents;
 }
@@ -370,16 +369,16 @@ void Shader::addComponent(std::string& components, const std::string fileName, c
     // load file
     std::string source = loadFile(_fileName, SHADER_COMPONENTS_PATH);
     // some component files have snippets that are needed regardless of shader parameters, which are accessed with the general key
-    if (contains(source, GENERAL_KEY)) components += getKeyedSection(source, "@@", GENERAL_KEY);
+    if (p_hasKey(source, GENERAL_KEY)) components += p_getKeyedSubstr(source, "@@", GENERAL_KEY);
     // otherwise, only copy the code associated with the specified key
-    components += getKeyedSection(source, "@@", key);
+    components += p_getKeyedSubstr(source, "@@", key);
 }
 void Shader::assembleSource(std::string& source, const std::string components) {
     for (std::string key : STRUCTURAL_KEYS) {
         std::string section = "";
         int c = components.find(key);
         while(c != std::string::npos) {
-            section += getKeyedSection(components.substr(c), '@', key);
+            section += p_getKeyedSubstr(components.substr(c), '@', key);
             c = components.find(key, c + 1);
         }
         fillPlaceholders(section, "&&");
@@ -388,31 +387,49 @@ void Shader::assembleSource(std::string& source, const std::string components) {
     }
 }
 void Shader::fillPlaceholders(std::string& section, char flag) {
-    while(contains(section, flag)) {
+    // keeps running until there are no more of the specified flags
+    while(p_hasKey(section, flag)) {
+        // look for the first and second appearances of the flag. These are the opening and closing flags of the first placeholder.
         size_t var_start = section.find(flag), var_end = section.find(flag, var_start + 1), fill_start = 0, fill_end = 0;
+        // the text contained within the flags is either the placeholder or the snippet that should replace the placeholder
         std::string var = section.substr(var_start, var_end - var_start), fill = "";
-        if (contains(var, '\n')) {
+        // if var has a line break in it, it must be the snippet that replaces the placeholder
+        if (p_hasKey(var, '\n')) {
+            // the placeholder is the text that occurs before the line break plus a closing flag
             var = var.substr(0, var.find('\n')) + flag;
+            // the replacement text is everything after the line break until the closing character
             fill = section.substr(var_start + var.length(), var_end - var_start - var.length());
+            // erase the replacement text
             section.erase(var_start, var_end - var_start + 2);
+            // search for the key and replace it with the replacement text
             fill_start = section.find(var);
             if (fill_start != std::string::npos) {
                 fill_end = section.find(flag, fill_start + 1);
                 section.replace(fill_start, fill_end - fill_start + 1, fill);
             }
             #if DEBUG_SHADER_BUILDER_SHOW_UNUSED_VARS
+                // if could not find the key, then there was a designated replacement text but it was unused
+                // this is not necessarily an error (because the replacement text still gets deleted), but may not be intended
                 else std::cout << "ERROR::SHADER::UNUSED_VARIABLE: Variable \"" << var << "\" defined but not used." << std::endl;
             #endif
+        // otherwise, var is already a placeholder
         } else {
+            // add a line break and look for the replacement text
             var += '\n';
-            if (!contains(section, var)) {
+            if (!p_hasKey(section, var)) {
+                // if the flag-key-line break combo doesn't exist, then there is no replacement section
+                // this is critical because the shader code is unlikely to compile if placeholders are not replaced
                 std::cout << "ERROR::SHADER::MISSING_DEFINITION: Variable \"" << var.substr(0, var.length() - 1) 
                     << flag << "\" undefined." << std::endl;
                 break;
             }
+            // locating replacement text so that it can be erased
             fill_start = section.find(var), fill_end = section.find(flag, fill_start + 1);
+            // replacement code starts after the line break
             fill = section.substr(fill_start + var.length(), fill_end - fill_start - var.length());
+            // replace the original placeholder with replacement code
             section.replace(var_start, var_end - var_start + 1, fill);
+            // account for the change in text positions given the above replacement, then erase the replacement code
             size_t l = fill_end - fill_start + 2;
             fill_start += (var_start < fill_start) ? fill.length() - var_end + var_start - 1 : 0;
             section.erase(fill_start, l);
@@ -420,10 +437,10 @@ void Shader::fillPlaceholders(std::string& section, char flag) {
     }
 }
 void Shader::fillPlaceholders(std::string& section, std::string flag) {
-    while(contains(section, flag)) {
+    while(p_hasKey(section, flag)) {
         size_t var_start = section.find(flag), var_end = section.find(flag, var_start + 1), fill_start = 0, fill_end = 0;
         std::string var = section.substr(var_start, var_end - var_start), fill = "";
-        if (contains(var, '\n')) {
+        if (p_hasKey(var, '\n')) {
             var = var.substr(0, var.find('\n')) + flag;
             fill = section.substr(var_start + var.length() - flag.length() + 1, 
                                   var_end - var_start - var.length() + flag.length() - 1);
@@ -438,7 +455,7 @@ void Shader::fillPlaceholders(std::string& section, std::string flag) {
             #endif
         } else {
             var += '\n';
-            if (!contains(section, var)) {
+            if (!p_hasKey(section, var)) {
                 std::cout << "ERROR::SHADER::MISSING_DEFINITION: Variable \"" << var.substr(0, var.length() - flag.length()) 
                     << flag << "\" undefined." << std::endl;
                 break;

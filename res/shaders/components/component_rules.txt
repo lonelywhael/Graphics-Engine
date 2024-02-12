@@ -84,3 +84,5 @@ cannot know the order layout declarations are going to occur in. As such, the pa
 increment by 1 for each subsequent '$' that is found.
 
 The resulting code will be compiled as a shader.
+
+NOTE: Comments are permitted as they are removed by the file input reader by default.

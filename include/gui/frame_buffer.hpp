@@ -9,7 +9,7 @@
 //implements OpenGL functionality to the specific context of Apple in order to draw windows and such
 #include <GLFW/glfw3.h>
 
-#include "../io/format.hpp"
+#include "../io/serializer.hpp"
 
 #include "elements.hpp"
 #include "renderer.hpp"
@@ -71,7 +71,7 @@ public:
     FrameBuffer(const unsigned int type, const unsigned int call_format, 
                 const int width, const int height, const unsigned int n_channels, 
                 const bool depth_enabled);
-    FrameBuffer(Format& object);
+    FrameBuffer(Serializer& object);
     // Frame buffers handle several dynamic pointers and have parallel openGL objects that must be disposed of properly on deletion
     ~FrameBuffer();
 
@@ -102,7 +102,7 @@ public:
     // apply anti aliasing post-processing to the frame
     void applyAntiAliasing();
 
-    Format getJSON();
+    Serializer getJSON();
 private:
     // id used to refer to the parallel openGL frame buffer object
     unsigned int frameBufferID;

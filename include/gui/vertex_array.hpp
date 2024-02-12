@@ -12,7 +12,7 @@
 #include <glm/glm.hpp>
 
 #include "io/file_io.hpp"
-#include "io/format.hpp"
+#include "io/serializer.hpp"
 
 #include "elements.hpp"
 
@@ -102,7 +102,7 @@ public:
     VertexArray();
     // read a vertex array from a save file, using the specified render strategy
     VertexArray(std::string file_name, const unsigned int draw_type);
-    VertexArray(Format& object);
+    VertexArray(Serializer& object);
     ~VertexArray();
 
     VertexArray(const VertexArray&) = delete;
@@ -152,7 +152,7 @@ public:
     unsigned int getIndexCount() const;
 
     // save the vertex array to a binary file
-    Format getJSON() const;
+    Serializer getJSON() const;
     void save(std::string fileName);
     void load(std::string fileName);
 

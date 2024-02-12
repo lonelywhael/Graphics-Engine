@@ -15,7 +15,8 @@
 #include "gui/vertex_array.hpp"
 #include "gui/window.hpp"
 
-#include "io/format.hpp"
+#include "io/serializer.hpp"
+#include "io/parser.hpp"
 
 // default fov angle and zoom angle (in degrees)
 static const float FOV = 45, ZOOM = 5;
@@ -34,7 +35,7 @@ std::shared_ptr<Camera> camera = std::make_shared<Camera>(cameraPos, FOV, window
 void handleKeystrokes();
 void handleCursor();
 
-int main() {
+int makeScene() {
 
     // allow window to be resized
     window.enableResizing();
@@ -150,6 +151,15 @@ int main() {
         window.update(); // swaps the buffered image with what is being displayed
     }
     return 0;
+}
+
+int main() {
+    //std::string test;
+    //f_readText("../res/shaders/components/v_rendering.glsl", test);
+    //std::cout << test << std::endl;
+    //Serializer map = Serializer("../res/test.json");
+    //map.print();
+    makeScene();
 }
 
 void handleKeystrokes() {

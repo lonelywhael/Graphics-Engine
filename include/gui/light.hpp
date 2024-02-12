@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../io/format.hpp"
+#include "../io/serializer.hpp"
 
 #include "elements.hpp"
 #include "texture.hpp"
@@ -75,7 +75,7 @@ struct Light {
               constant(constant), linear(linear), quadratic(quadratic), 
               // spot angles are given as degrees, but shader needs a cosine value since std::cos() is an expensive call
               inner(std::cos(glm::radians(inner))), outer(std::cos(glm::radians(outer))) {}
-    Light(Format& object);
+    Light(Serializer& object);
 
     bool operator==(Light& other);
 
@@ -116,7 +116,7 @@ struct Light {
     // modify and retrieve the slot value of shadow maps (necessary for properly slotting them when rendering a complete scene)
     int getShadowMapSlot() const { return shadowMap; }
 
-    Format getJSON();
+    Serializer getJSON();
     void print() const;
 private:
     // transformation from world space to light's clip space

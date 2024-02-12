@@ -86,7 +86,7 @@ VertexArray::VertexArray(std::string file_name, unsigned int draw_type)
     genOpenGL();
     load(file_name);
 }
-VertexArray::VertexArray(Format& object) 
+VertexArray::VertexArray(Serializer& object) 
         : draw_type(static_cast<unsigned int>(object["draw_type"])), geometry_type(static_cast<unsigned int>(object["geometry_type"])) {
     genOpenGL();
 
@@ -382,12 +382,12 @@ void VertexArray::activateAll() {
 unsigned int VertexArray::getVertexCount() const { return (activeVertexBuffer != -1) ? buffers[activeVertexBuffer]->count : 0; }
 unsigned int VertexArray::getIndexCount() const { return (activeIndexBuffer != -1) ? buffers[activeIndexBuffer]->count : 0; }
 
-Format VertexArray::getJSON() const {
+Serializer VertexArray::getJSON() const {
     if (geometry_type == -1) {
         std::cout << "ERROR::VERTEX_ARRAY::SAVING_ERROR: Vertex array object cannot be saved since it is not in a saveable format." << std::endl;
-        return (Format) nullptr;
+        return (Serializer) nullptr;
     }
-    Format object;
+    Serializer object;
     object["draw_type"] = draw_type;
     object["geometry_type"] = geometry_type;
     switch(geometry_type) {
@@ -448,7 +448,7 @@ void VertexArray::save(std::string fileName) {
     // create the correct file path based on the given file name: ../res/meshes/(fileName)
     std::string filePath = MESH_PATH + fileName;
 
-    f_write(filePath, data, sizeAttrib + sizeBuffer, BIN);
+    f_writeBinary(filePath, data, sizeAttrib + sizeBuffer);
 
     // dispose of the data since it has been saved to the hard drive
     std::cout << "Data associated with vertex array " << vertexArrayID << " was freed." << std::endl;
@@ -459,7 +459,9 @@ void VertexArray::load(std::string file_name) {
     geometry_type = G_SAVED;
     std::string filePath = MESH_PATH + file_name;
 
-    auto [data, length] = f_read(filePath, BIN);
+    size_t length = f_length(filePath);
+    char* data = new char[length];
+    f_readBinary(filePath, data, length);
 
     // bind the vertex array
     bind();
@@ -471,7 +473,7 @@ void VertexArray::load(std::string file_name) {
      */
 
     // get the number of attributes from the first unsigned int in the file data
-    unsigned int nAttributes = *reinterpret_cast<const unsigned int*>(data);
+    unsigned int nAttributes = *reinterpret_cast<const unsigned int*>(&data[0]);
 
     // next, read through each attribute and create a vertex attribute struct
     for (int i = 0; i < nAttributes; i++) {
@@ -519,6 +521,7 @@ void VertexArray::load(std::string file_name) {
     #if DEBUG_OPENGL_OBJECTS
         std::cout << "Data associated with vertex array " << vertexArrayID << " was freed." << std::endl;
     #endif
+
     delete[] data;
 }
 
@@ -551,7 +554,6 @@ Buffer::Buffer(const unsigned int type, void*&& data, const size_t size, const u
     #if DEBUG_OPENGL_OBJECTS 
         std::cout << "Buffer " << bufferID << " was created (moved)." << std::endl;
     #endif
-    std::cout << ((data == nullptr) ? "nullptr" : data) << std::endl;
     this->data = data;
     data = nullptr;
 }

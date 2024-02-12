@@ -25,7 +25,7 @@ FrameBuffer::FrameBuffer(const unsigned int type, const unsigned int call_format
           width(width), height(height), n_channels(n_channels), 
           depth_enabled(depth_enabled) 
     { initialize(); }
-FrameBuffer::FrameBuffer(Format& object) 
+FrameBuffer::FrameBuffer(Serializer& object) 
         : type(static_cast<unsigned int>(object["type"])), call_format(static_cast<unsigned int>(object["call_format"])),
           width(static_cast<int>(object["width"])), height(static_cast<int>(object["height"])), n_channels(static_cast<unsigned int>(object["n_channels"])),
           depth_enabled(static_cast<bool>(object["depth_enabled"])) 
@@ -242,8 +242,8 @@ bool FrameBuffer::checkStatus() const {
     return fboError;
 }
 
-Format FrameBuffer::getJSON() {
-    Format object = Format();
+Serializer FrameBuffer::getJSON() {
+    Serializer object = Serializer();
     object["type"] = type;
     object["call_format"] = call_format;
     object["width"] = width;

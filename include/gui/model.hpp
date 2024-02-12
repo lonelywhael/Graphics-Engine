@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../io/format.hpp"
+#include "../io/serializer.hpp"
 
 #include "elements.hpp"
 #include "light.hpp"
@@ -75,7 +75,7 @@ public:
             : type(R_LIGHTING_3D),
               vertexArray(vertexArray), material(material), textureGroup(textureGroup), 
               pos(pos), scale(scale), aos(aos), angle(angle) { setModel(); }
-    Model(Format& format);
+    Model(Serializer& object);
 
     bool operator==(Model& other) {
         return type == other.type && vertexArray == other.vertexArray && textureGroup == other.textureGroup && 
@@ -108,7 +108,7 @@ public:
     void generateMaterial(const glm::vec3 specular, const float shininess);
     void generateMaterial(const float shininess = 0.0f);
 
-    Format getJSON();
+    Serializer getJSON();
 
     void print() const;
 private:

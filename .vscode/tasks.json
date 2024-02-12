@@ -22,9 +22,6 @@
             	//"-Wall",
             	//"-Wextra"
 			],
-			"options": {
-				"cwd": "${fileDirname}"
-			},
 			"problemMatcher": [
 				"$gcc"
 			],

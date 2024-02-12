@@ -1,6 +1,6 @@
 #include "gui/frame.hpp"
 
-Frame::Frame(Format& object) {
+Frame::Frame(Serializer& object) {
     /*frameBuffer = (object["frame_buffer"] != nullptr) ? new FrameBuffer(static_cast<Format&>(object["frame_buffer"])) : nullptr;
     for (int i = 0; i < object["render_groups"].size(); i++)
         renderGroups.push_back(new RenderGroup(static_cast<Format&>(object["render_groups"][i])));
@@ -76,8 +76,8 @@ void Frame::print(int tab) const {
     }*/
 }
 
-Format Frame::getJSON() {
-    Format object;
+Serializer Frame::getJSON() {
+    Serializer object;
     (frameBuffer == nullptr) ? object["frame_buffer"] = nullptr : object["frame_buffer"] = std::move(frameBuffer->getJSON());
     for (int i = 0; i < renderGroups.size(); i++) object["render_groups"][i] = std::move(renderGroups[i]->getJSON());
     for (int i = 0; i < subframes.size(); i++) object["subframes"][i] = std::move(subframes[i]->getJSON());
@@ -100,15 +100,15 @@ Pane::Pane(std::unique_ptr<FrameBuffer>&& frameBuffer, float posX, float posY, f
     paneGeometry->makePane(posX, posY, dimX, dimY);
     paneModel = std::make_shared<Model>(paneGeometry, this->frameBuffer->getBuffer());
 }
-Pane::Pane(Format object) : Frame(object) {
+Pane::Pane(Serializer object) : Frame(object) {
     for (int i = 0; i < 4; i++) paneDims[i] = static_cast<float>(object["pane_dims"][i]);
     std::shared_ptr<VertexArray> paneGeometry = std::make_shared<VertexArray>();
     paneGeometry->makePane(paneDims[0], paneDims[1], paneDims[2], paneDims[3]);
     paneModel = std::make_shared<Model>(paneGeometry, frameBuffer->getBuffer());
 }
 
-Format Pane::getJSON() {
-    Format object = Frame::getJSON();
+Serializer Pane::getJSON() {
+    Serializer object = Frame::getJSON();
     object["pane_geometry"] = { paneDims[0], paneDims[1], paneDims[2], paneDims[3] };
 
     return object;

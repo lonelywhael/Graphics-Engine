@@ -10,7 +10,7 @@
 
 #include "stb_image/stb_image.h" // API used to read data from image files
 
-#include "io/format.hpp"
+#include "io/serializer.hpp"
 
 #include "elements.hpp"
 
@@ -74,7 +74,7 @@ public:
     Texture(const unsigned int textureFormat, const std::string fileName, const std::string extn,
             const unsigned int filter, const unsigned int wrapper, const unsigned int mipmap, 
             const int slot);
-    Texture(Format object);
+    Texture(Serializer object);
     // A destructor is required to delete the associated OpenGL texture object when this object is deleted
     ~Texture();
 
@@ -107,7 +107,7 @@ public:
     // set the texture's slot
     void setSlot(const int slot) { this->slot = slot; }
 
-    Format getJSON() const;
+    Serializer getJSON() const;
 
     void print();
 
@@ -146,7 +146,7 @@ public:
     TextureGroup(const unsigned int firstSlot = 0) : nextSlot(firstSlot) {}
     TextureGroup(const std::shared_ptr<Texture> texture, const unsigned int firstSlot = 0) 
             : nextSlot(firstSlot) { addTexture(texture); }
-    TextureGroup(Format& object);
+    TextureGroup(Serializer& object);
 
     bool operator==(TextureGroup& other);
     bool operator==(Texture& other);
@@ -177,7 +177,7 @@ public:
     // bind all members of the texture group
     void bind() const { for (int t = 0; t < textures.size(); t++) textures[t]->bind(); }
 
-    Format getJSON();
+    Serializer getJSON();
 
 private:
     // need to tell the destructor whether to delete the textures or not, so pair each texture with a bool value
